@@ -1,2 +1,2 @@
-# nx-template
-Monorepo template for Nx
+# cobalt-ts
+Multiplatform utilities library for Typescript.
