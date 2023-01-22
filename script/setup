@@ -1,0 +1,8 @@
+#!/bin/bash
+
+cd "$(dirname "$0")"
+
+curl https://get.volta.sh | bash
+volta install node
+npm install
+# npx --yes prisma generate # This is only needed if you have a database

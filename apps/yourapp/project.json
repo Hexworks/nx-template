@@ -1,0 +1,64 @@
+{
+    "name": "yourapp",
+    "$schema": "../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "apps/yourapp",
+    "projectType": "application",
+    "targets": {
+        "build": {
+            "executor": "@nrwl/next:build",
+            "outputs": ["{options.outputPath}"],
+            "defaultConfiguration": "production",
+            "options": {
+                "root": "apps/yourapp",
+                "outputPath": "dist/apps/yourapp"
+            },
+            "configurations": {
+                "development": {
+                    "outputPath": "apps/yourapp"
+                },
+                "production": {}
+            }
+        },
+        "serve": {
+            "executor": "@nrwl/next:server",
+            "defaultConfiguration": "development",
+            "options": {
+                "buildTarget": "yourapp:build",
+                "dev": true
+            },
+            "configurations": {
+                "development": {
+                    "buildTarget": "yourapp:build:development",
+                    "dev": true
+                },
+                "production": {
+                    "buildTarget": "yourapp:build:production",
+                    "dev": false,
+                    "hostname": "0.0.0.0"
+                }
+            }
+        },
+        "export": {
+            "executor": "@nrwl/next:export",
+            "options": {
+                "buildTarget": "yourapp:build:production"
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/apps/yourapp"],
+            "options": {
+                "jestConfig": "apps/yourapp/jest.config.ts",
+                "passWithNoTests": true
+            }
+        },
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["apps/yourapp/**/*.{ts,tsx,js,jsx}"]
+            }
+        }
+    },
+    "tags": []
+}

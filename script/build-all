@@ -1,3 +1,9 @@
 #!/bin/bash
 
-nx run-many --target=build --all
+cd "$(dirname "$0")"
+
+./typechain
+
+cd ..
+
+clear && nx run-many --target=build --all --skip-nx-cache

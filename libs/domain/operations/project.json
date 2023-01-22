@@ -1,0 +1,34 @@
+{
+    "name": "domain-operations",
+    "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+    "sourceRoot": "libs/domain/operations/src",
+    "projectType": "library",
+    "targets": {
+        "build": {
+            "executor": "@nrwl/js:tsc",
+            "outputs": ["{options.outputPath}"],
+            "options": {
+                "outputPath": "dist/libs/domain/operations",
+                "main": "libs/domain/operations/src/index.ts",
+                "tsConfig": "libs/domain/operations/tsconfig.lib.json",
+                "assets": ["libs/domain/operations/*.md"]
+            }
+        },
+        "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": ["{options.outputFile}"],
+            "options": {
+                "lintFilePatterns": ["libs/domain/operations/**/*.ts"]
+            }
+        },
+        "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": ["coverage/libs/domain/operations"],
+            "options": {
+                "jestConfig": "libs/domain/operations/jest.config.ts",
+                "passWithNoTests": true
+            }
+        }
+    },
+    "tags": []
+}

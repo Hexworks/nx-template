@@ -1,0 +1,23 @@
+version: "3.5"
+
+services:
+    postgres_yourapp:
+        container_name: postgres_yourapp
+        image: postgres
+        environment:
+            POSTGRES_USER: ${YOURAPP_DB_USER}
+            POSTGRES_DB: ${YOURAPP_DB_USER}
+            POSTGRES_PASSWORD: ${YOURAPP_DB_PASSWORD}
+            PGDATA: /data/postgres_yourapp
+        volumes:
+            - postgres_yourapp:/data/postgres_yourapp
+        ports:
+            - "${YOURAPP_DB_PORT}:5432"
+        networks:
+            - storage
+        restart: unless-stopped
+networks:
+    storage:
+        driver: bridge
+volumes:
+    postgres_yourapp:

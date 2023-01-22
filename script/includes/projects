@@ -2,10 +2,10 @@
 
 declare -A projects
 projects=(
-    ["project-name"]="project/path"
+    ["yourapp"]="apps/yourapp" # put the name - path of your project here
 )
 
 declare -A project_names
 project_names=(
-    ["project-shorthand"]="project-name"
+    ["yourapp"]="yourapp" # put the abbreviation - name of your project here
 )

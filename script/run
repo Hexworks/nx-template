@@ -21,4 +21,8 @@ fi
 
 cd ..
 
-node dist/apps/${project_names[$1]}/main.js
+# Note that these can't be moved to script/ci
+# Because the environmental variables won't be present
+npx --yes nx build ${project_names[$1]}
+npx --yes prisma migrate deploy             # This is only needed if you have a database
+npx --yes nx serve ${project_names[$1]} --prod

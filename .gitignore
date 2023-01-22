@@ -7,6 +7,7 @@
 
 # dependencies
 node_modules
+package-lock.json
 
 # IDEs and editors
 /.idea
@@ -19,10 +20,21 @@ node_modules
 
 # IDE - VSCode
 .vscode/*
-!.vscode/settings.json
 !.vscode/tasks.json
 !.vscode/launch.json
 !.vscode/extensions.json
+
+# System Files
+.DS_Store
+Thumbs.db
+.env
+.env.local
+
+# Next.js
+.next
+
+# generated typechain code
+libs/shared/blockchain/src/
 
 # misc
 /.sass-cache
@@ -33,7 +45,4 @@ npm-debug.log
 yarn-error.log
 testem.log
 /typings
-
-# System Files
-.DS_Store
-Thumbs.db
+input.json
