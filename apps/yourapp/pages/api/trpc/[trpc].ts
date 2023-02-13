@@ -9,7 +9,7 @@ const trpcHandler = createNextApiHandler({
     createContext,
 });
 
-const CORS_ENABLED = process.env.GENRAE_ENABLE_CORS === "true";
+const CORS_ENABLED = process.env.ENABLE_CORS === "true";
 
 const apiHandler = async (req: NextApiRequest, res: NextApiResponse) => {
     if (CORS_ENABLED) {
