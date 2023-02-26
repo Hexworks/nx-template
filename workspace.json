@@ -4,6 +4,7 @@
     "projects": {
         "app-config-yourapp": "libs/app-config/yourapp",
         "domain-operations": "libs/domain/operations",
+        "express-example": "apps/express-example",
         "shared-types": "libs/shared/types",
         "shared-utils": "libs/shared/utils",
         "yourapp": "apps/yourapp"
