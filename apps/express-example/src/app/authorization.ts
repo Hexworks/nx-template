@@ -1,7 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { Hello, Role } from "@domain/operations";
-import { Authorization } from "@hexworks/cobalt-authorization";
-import { allow } from "./utils";
+import { allow, Authorization } from "@hexworks/cobalt-authorization";
 
 export const AUTHORIZATION: Authorization = {
     roles: {

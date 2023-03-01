@@ -1,28 +1,33 @@
-import { ANON_USER, UserRepository } from "@domain/operations";
+import {
+    ANON_USER,
+    AUTHORIZATION as authorization,
+    UserRepository,
+} from "@domain/operations";
 import { PrismaClient } from "@prisma/client";
 import { isRight } from "fp-ts/lib/Either";
-import * as TE from "fp-ts/TaskEither";
-import { AUTHORIZATION as authorization } from "./authorization";
+import * as RTE from "fp-ts/ReaderTaskEither";
 import { PrismaUserRepository } from "./db";
-import { YourApp } from "./YourApp";
+import { Deps, ExampleApp } from "./ExampleApp";
 
 const prisma = new PrismaClient();
 
 describe("Given an MVP app", () => {
-    let target: YourApp;
-
+    let target: ExampleApp;
     let userRepository: UserRepository;
+    let deps: Deps;
 
     beforeAll(async () => {
         userRepository = PrismaUserRepository({ prisma });
     });
 
     beforeEach(async () => {
-        target = new YourApp({
+        deps = {
             prisma,
+            anonUser: ANON_USER,
             authorization,
             userRepository,
-        });
+        };
+        target = new ExampleApp(deps);
 
         await target.start()();
     });
@@ -30,13 +35,13 @@ describe("Given an MVP app", () => {
     describe("When hello", () => {
         test(" Then hello", async () => {
             const result = await target.hello(
-                TE.right({
+                RTE.right({
                     currentUser: ANON_USER,
                     data: {
                         id: ANON_USER.id,
                     },
                 })
-            )();
+            )(deps)();
 
             expect(isRight(result)).toBeTruthy();
         });

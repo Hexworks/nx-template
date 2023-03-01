@@ -6,25 +6,28 @@ import { CuidDto } from "@shared/types";
 import { pipe } from "fp-ts/lib/function";
 import {
     ask,
-    chain,
+    bind,
+    bindW,
     chainW,
+    Do,
     fromTaskEither,
-    right,
 } from "fp-ts/ReaderTaskEither";
 import { UserRepository } from "../repository";
+import { User } from "../types";
 
 type Deps = OperationDependencies & {
     userRepository: UserRepository;
 };
 
-export const Hello: Operation<CuidDto, string, Deps> = ({ id }) => {
+export const UpdateUser: Operation<CuidDto, User, Deps> = ({ id }) => {
     return pipe(
-        ask<Deps>(),
-        chainW(({ userRepository }) =>
-            fromTaskEither(userRepository.findById(id))
+        Do,
+        bind("deps", () => ask<Deps>()),
+        bindW("existingUser", ({ deps }) =>
+            fromTaskEither(deps.userRepository.findById(id))
         ),
-        chain((existingUser) => {
-            return right(`Hello, ${existingUser.name}!`);
+        chainW(({ deps, existingUser }) => {
+            return fromTaskEither(deps.userRepository.update(existingUser));
         })
     );
 };

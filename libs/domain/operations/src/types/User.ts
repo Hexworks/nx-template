@@ -5,7 +5,6 @@ export type User = {
     name: string;
     email: string;
     emailVerified: Date | null;
-
     roles: string[];
     createdAt: Date;
 };

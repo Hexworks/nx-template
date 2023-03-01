@@ -1,9 +1,19 @@
-import { initTRPC, TRPCError } from "@trpc/server";
-import superjson from "superjson";
-import { pipe } from "fp-ts/function";
-import { CuidDto } from "@shared/types";
+import { Deps, ExampleApp, PrismaUserRepository } from "@domain/app";
 import { ANON_USER } from "@domain/operations";
+import {
+    authorize,
+    Context as AuthContext,
+    Operation,
+    OperationDependencies,
+} from "@hexworks/cobalt-authorization";
+import { PrismaClient } from "@prisma/client";
+import { CuidDto } from "@shared/types";
+import { initTRPC, TRPCError } from "@trpc/server";
+import * as RTE from "fp-ts/ReaderTaskEither";
+import superjson from "superjson";
+import { AUTHORIZATION } from "../app";
 
+// TODO: move this to a shared lib
 interface User {
     id: string;
     name: string;
@@ -38,26 +48,53 @@ export const authenticatedProcedure = t.procedure.use(({ ctx, next }) => {
         },
     });
 });
+// TODO: move this to a shared lib
 
+//* Actual API code
 export const authRouter = router({
     getSession: t.procedure.query(({ ctx }) => {
         return ctx.session;
     }),
 });
 
+const prisma = new PrismaClient();
+
+export const trpcOperationAdapter =
+    <I, O, D extends OperationDependencies>(op: Operation<I, O, D>, deps: D) =>
+    async (input: AuthContext<I>) => {
+        const result = await authorize(op)(RTE.right(input))(deps)();
+        if (result._tag === "Left") {
+            throw new TRPCError({
+                code:
+                    result.left.__tag === "AuthorizationError"
+                        ? "UNAUTHORIZED"
+                        : "INTERNAL_SERVER_ERROR",
+                message: result.left.message,
+                cause: result.left,
+            });
+        } else {
+            return result.right.data;
+        }
+    };
+
+const deps: Deps = {
+    anonUser: ANON_USER,
+    authorization: AUTHORIZATION,
+    prisma: prisma,
+    userRepository: PrismaUserRepository({ prisma }),
+    adapt: trpcOperationAdapter,
+};
+
+const app = new ExampleApp(deps);
+
 const createAnonRoutes = () =>
     router({
-        hello: publicProcedure
-            .input(CuidDto)
-            .query(({ input }): Promise<string> => {
-                return pipe(
-                    {
-                        currentUser: ANON_USER,
-                        data: input,
-                    },
-                    execute(YOUR_APP.hello)
-                );
-            }),
+        hello: publicProcedure.input(CuidDto).query(({ input }) =>
+            app.hello({
+                currentUser: ANON_USER,
+                data: input,
+            })
+        ),
     });
 
 export const appRouter = t.router({
@@ -67,21 +104,3 @@ export const appRouter = t.router({
 
 // export type definition of API
 export type AppRouter = typeof appRouter;
-
-// export const execute =
-//     <I, O>(ao: AuthorizedOperation<I, O>) =>
-//     async (input: Context<I>): Promise<O> => {
-//         const result = await ao(TE.right(input))();
-//         if (result._tag === "Left") {
-//             throw new TRPCError({
-//                 code:
-//                     result.left.__tag === "AuthorizationError"
-//                         ? "UNAUTHORIZED"
-//                         : "INTERNAL_SERVER_ERROR",
-//                 message: result.left.message,
-//                 cause: result.left,
-//             });
-//         } else {
-//             return result.right.data;
-//         }
-//     };
